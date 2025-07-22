@@ -587,6 +587,64 @@
             color: var(--secondary);
         }
 
+        /* Logo Slider */
+        .logo-slider {
+            margin: 6rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .logo-slider::before, .logo-slider::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 100px;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .logo-slider::before {
+            left: 0;
+            background: linear-gradient(to right, var(--bg), transparent);
+        }
+
+        .logo-slider::after {
+            right: 0;
+            background: linear-gradient(to left, var(--bg), transparent);
+        }
+
+        .logo-slider-track {
+            display: flex;
+            gap: 4rem;
+            animation: scroll 30s linear infinite;
+            width: calc(250px * 10);
+        }
+
+        .logo-slider-item {
+            width: 120px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: grayscale(100%) opacity(0.7);
+            transition: all 0.3s ease;
+        }
+
+        .logo-slider-item:hover {
+            filter: grayscale(0) opacity(1);
+        }
+
+        .logo-slider-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-250px * 5)); }
+        }
+
         /* Newsletter */
         .newsletter {
             background: var(--card-bg);
@@ -750,6 +808,14 @@
                 grid-template-columns: 1fr;
             }
 
+            .logo-slider {
+                margin: 4rem 0;
+            }
+
+            .logo-slider::before, .logo-slider::after {
+                width: 50px;
+            }
+
             .newsletter {
                 padding: 2rem;
             }
@@ -890,6 +956,60 @@
     </div>
 </section>
 
+<!-- Logo Slider -->
+<div class="content-section">
+    <div class="logo-slider">
+        <div class="logo-slider-track">
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Meta-Logo.png" alt="Meta">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Samsung_Logo.svg" alt="Samsung">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Sony_logo.svg" alt="Sony">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Intel_logo_%282006-2020%29.svg" alt="Intel">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/NVIDIA_logo.svg" alt="NVIDIA">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="IBM">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Amazon_Web_Services_Logo.svg" alt="AWS">
+            </div>
+            <!-- Duplicate items for seamless looping -->
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Meta-Logo.png" alt="Meta">
+            </div>
+            <div class="logo-slider-item">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Samsung_Logo.svg" alt="Samsung">
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Newsletter -->
 <div class="content-section">
     <div class="newsletter">
@@ -979,22 +1099,74 @@
             renderer.setSize(120, 120);
             container.appendChild(renderer.domElement);
 
-            // Apple logo geometry
-            const geometry = new THREE.TorusGeometry(1, 0.4, 16, 100);
-            const material = new THREE.MeshBasicMaterial({
-                color: 0x0071e3,
-                wireframe: true
-            });
-            const appleLogo = new THREE.Mesh(geometry, material);
-            scene.add(appleLogo);
+            // Apple logo geometry (more accurate shape)
+            const appleShape = new THREE.Shape();
+            appleShape.moveTo(0, 5);
+            appleShape.bezierCurveTo(0, 5, 2, 0, 6, 0);
+            appleShape.bezierCurveTo(10, 0, 12, 5, 12, 5);
+            appleShape.bezierCurveTo(12, 5, 10, 10, 6, 10);
+            appleShape.bezierCurveTo(2, 10, 0, 5, 0, 5);
 
-            camera.position.z = 3;
+            // Add leaf
+            const leafShape = new THREE.Shape();
+            leafShape.moveTo(6, 10);
+            leafShape.bezierCurveTo(6, 10, 8, 12, 10, 15);
+            leafShape.bezierCurveTo(12, 12, 14, 10, 14, 10);
+
+            // Extrude geometry
+            const extrudeSettings = {
+                steps: 2,
+                depth: 0.5,
+                bevelEnabled: true,
+                bevelThickness: 0.2,
+                bevelSize: 0.2,
+                bevelOffset: 0,
+                bevelSegments: 3
+            };
+
+            const appleGeometry = new THREE.ExtrudeGeometry(appleShape, extrudeSettings);
+            const leafGeometry = new THREE.ExtrudeGeometry(leafShape, extrudeSettings);
+
+            // Material
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x0071e3,
+                specular: 0x111111,
+                shininess: 30,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            // Apple mesh
+            const apple = new THREE.Mesh(appleGeometry, material);
+            apple.position.z = -1;
+            apple.rotation.x = Math.PI / 2;
+            scene.add(apple);
+
+            // Leaf mesh
+            const leaf = new THREE.Mesh(leafGeometry, material);
+            leaf.position.z = -1;
+            leaf.rotation.x = Math.PI / 2;
+            scene.add(leaf);
+
+            // Lighting
+            const light1 = new THREE.DirectionalLight(0xffffff, 1);
+            light1.position.set(1, 1, 1);
+            scene.add(light1);
+
+            const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
+            light2.position.set(-1, -1, 1);
+            scene.add(light2);
+
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+
+            camera.position.z = 5;
 
             // Animation
             const animate = () => {
                 requestAnimationFrame(animate);
-                appleLogo.rotation.x += 0.01;
-                appleLogo.rotation.y += 0.01;
+                apple.rotation.y += 0.01;
+                leaf.rotation.y += 0.01;
                 renderer.render(scene, camera);
             };
 
