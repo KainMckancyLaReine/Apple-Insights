@@ -3,36 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apple Insights | Premium Tech Analysis</title>
+    <title>Apple Insights | Next-Gen Tech Analysis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
-            --primary: #000;
-            --secondary: #888;
-            --bg: #fff;
-            --card-bg: #f8f8f8;
-            --text: #000;
-            --text-light: #666;
-            --accent: #0071e3;
-            --header-bg: rgba(255, 255, 255, 0.95);
-            --border: rgba(0, 0, 0, 0.08);
+            --primary-light: #000000;
+            --primary-dark: #ffffff;
+            --secondary-light: #6b7280;
+            --secondary-dark: #9ca3af;
+            --bg-light: #ffffff;
+            --bg-dark: #0a0a0a;
+            --surface-light: #f8fafc;
+            --surface-dark: #111111;
+            --card-light: rgba(255, 255, 255, 0.8);
+            --card-dark: rgba(17, 17, 17, 0.8);
+            --accent: #0066ff;
+            --accent-secondary: #ff3366;
+            --accent-tertiary: #00d4aa;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-tertiary: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-light: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-dark: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            --blur-sm: blur(8px);
+            --blur-md: blur(16px);
+            --blur-lg: blur(24px);
         }
 
-        .dark-mode {
-            --primary: #fff;
-            --secondary: #aaa;
-            --bg: #121212;
-            --card-bg: #1e1e1e;
-            --text: #fff;
-            --text-light: #ccc;
-            --accent: #0a84ff;
-            --header-bg: rgba(18, 18, 18, 0.95);
-            --border: rgba(255, 255, 255, 0.08);
+        [data-theme="dark"] {
+            --primary: var(--primary-dark);
+            --secondary: var(--secondary-dark);
+            --bg: var(--bg-dark);
+            --surface: var(--surface-dark);
+            --card: var(--card-dark);
+            --shadow: var(--shadow-dark);
+        }
+
+        [data-theme="light"] {
+            --primary: var(--primary-light);
+            --secondary: var(--secondary-light);
+            --bg: var(--bg-light);
+            --surface: var(--surface-light);
+            --card: var(--card-light);
+            --shadow: var(--shadow-light);
         }
 
         * {
@@ -47,114 +67,197 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
-            color: var(--text);
+            color: var(--primary);
             overflow-x: hidden;
             line-height: 1.6;
-            transition: background 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Modern Business Cursor */
+        /* Ultra Modern Cursor */
         .cursor {
             position: fixed;
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: var(--accent);
             pointer-events: none;
             z-index: 9999;
             transform: translate(-50%, -50%);
-            transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
             mix-blend-mode: difference;
         }
 
-        .cursor-follower {
+        .cursor-trail {
             position: fixed;
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             border: 1px solid var(--accent);
             border-radius: 50%;
             pointer-events: none;
             z-index: 9998;
             transform: translate(-50%, -50%);
-            transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
-            mix-blend-mode: difference;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: var(--blur-sm);
+            opacity: 0.7;
         }
 
-        .cursor.active, .cursor-follower.active {
-            width: 40px;
-            height: 40px;
-            background: rgba(10, 132, 255, 0.2);
+        .cursor.active {
+            width: 48px;
+            height: 48px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
         }
 
-        /* Gradient Mesh Background */
-        .gradient-bg {
+        .cursor-trail.active {
+            width: 64px;
+            height: 64px;
+            background: var(--glass-bg);
+            border: 2px solid var(--accent);
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.03;
+            background:
+                    radial-gradient(circle at 25% 25%, var(--accent) 0%, transparent 50%),
+                    radial-gradient(circle at 75% 75%, var(--accent-secondary) 0%, transparent 50%),
+                    radial-gradient(circle at 75% 25%, var(--accent-tertiary) 0%, transparent 50%),
+                    radial-gradient(circle at 25% 75%, var(--accent) 0%, transparent 50%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 0%, 100% 100%, 100% 0%, 0% 100%; }
+            25% { background-position: 100% 0%, 0% 100%, 0% 0%, 100% 100%; }
+            50% { background-position: 100% 100%, 0% 0%, 0% 100%, 100% 0%; }
+            75% { background-position: 0% 100%, 100% 0%, 100% 100%, 0% 0%; }
+        }
+
+        /* Floating Orbs */
+        .floating-orbs {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.03;
-            background:
-                    radial-gradient(circle at 20% 30%, var(--accent), transparent 40%),
-                    radial-gradient(circle at 80% 70%, #ff375f, transparent 40%),
-                    radial-gradient(circle at 50% 90%, #30d158, transparent 40%);
-            background-size: 200% 200%;
-            animation: gradientMove 20s ease infinite;
+            pointer-events: none;
         }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 0%; }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-tertiary) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: float 20s ease-in-out infinite;
         }
 
-        /* Preloader */
+        .orb:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .orb:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 15%;
+            animation-delay: -7s;
+        }
+
+        .orb:nth-child(3) {
+            width: 300px;
+            height: 300px;
+            bottom: 10%;
+            left: 50%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(15px) rotate(240deg); }
+        }
+
+        /* Next-Gen Preloader */
         .preloader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
-            background: var(--bg);
-            z-index: 9997;
+            background: linear-gradient(45deg, var(--bg), var(--surface));
+            z-index: 9999;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            transition: opacity 1s cubic-bezier(0.77, 0, 0.175, 1);
-        }
-
-        .preloader-text {
-            font-size: 0.875rem;
-            font-weight: 400;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-top: 2rem;
-            opacity: 0;
-            transform: translateY(10px);
+            transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         #preloader-3d {
-            width: 120px;
-            height: 120px;
+            width: 150px;
+            height: 150px;
+            margin-bottom: 2rem;
         }
 
-        /* Header */
+        .preloader-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(20px);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .loading-progress {
+            width: 200px;
+            height: 2px;
+            background: var(--glass-bg);
+            border-radius: 1px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 1px;
+            transition: width 0.3s ease;
+        }
+
+        /* Glassmorphism Header */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             padding: 1.5rem 2rem;
-            background: var(--header-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur-lg);
+            -webkit-backdrop-filter: var(--blur-lg);
+            border-bottom: 1px solid var(--glass-border);
             z-index: 1000;
-            border-bottom: 1px solid var(--border);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             transform: translateY(-100%);
         }
 
@@ -166,26 +269,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
         .logo {
             font-size: 1.5rem;
-            font-weight: 300;
-            letter-spacing: -0.01em;
+            font-weight: 200;
+            letter-spacing: -0.02em;
             position: relative;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .logo::after {
             content: '';
             position: absolute;
-            bottom: -2px;
+            bottom: -4px;
             left: 0;
             width: 0;
-            height: 1px;
-            background: var(--accent);
-            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .logo:hover::after {
@@ -195,32 +302,35 @@
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
         .nav-links a {
             text-decoration: none;
-            color: var(--text);
-            font-weight: 400;
+            color: var(--primary);
+            font-weight: 300;
             font-size: 0.875rem;
             letter-spacing: 0.02em;
             position: relative;
-            transition: color 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            opacity: 0.8;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            transform: translateY(-2px);
         }
 
         .nav-links a::after {
             content: '';
             position: absolute;
-            bottom: -2px;
-            left: 0;
+            bottom: -4px;
+            left: 50%;
             width: 0;
-            height: 1px;
+            height: 2px;
             background: var(--accent);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            transform: translateX(-50%);
         }
 
         .nav-links a:hover::after {
@@ -228,29 +338,31 @@
         }
 
         .theme-toggle {
-            background: none;
-            border: none;
-            color: var(--text);
-            font-size: 1.2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            color: var(--primary);
+            font-size: 0.75rem;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        .theme-toggle:hover {
-            transform: rotate(15deg);
-        }
-
-        .theme-text {
-            font-size: 0.75rem;
-            font-weight: 400;
+            backdrop-filter: var(--blur-sm);
+            font-family: 'JetBrains Mono', monospace;
             text-transform: uppercase;
             letter-spacing: 0.1em;
         }
 
-        /* Hero Section */
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Hero Section - Ultra Modern */
         .hero {
             height: 100vh;
             display: flex;
@@ -262,22 +374,104 @@
             overflow: hidden;
         }
 
-        .hero-content h1 {
-            font-size: clamp(3rem, 8vw, 8rem);
-            font-weight: 200;
-            letter-spacing: -0.03em;
-            line-height: 0.9;
-            opacity: 0;
-            transform: translateY(100px);
+        .hero-bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.05;
         }
 
-        .hero-content p {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            font-weight: 300;
-            margin-top: 2rem;
-            max-width: 600px;
+        .hero-content {
+            z-index: 1;
+            max-width: 1000px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3rem, 12vw, 12rem);
+            font-weight: 100;
+            letter-spacing: -0.05em;
+            line-height: 0.85;
+            opacity: 0;
+            transform: translateY(100px);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 200;
             opacity: 0;
             transform: translateY(50px);
+            margin-bottom: 3rem;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 300;
+            color: var(--secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .cta-primary, .cta-secondary {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.875rem;
+            letter-spacing: 0.02em;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-primary {
+            background: var(--accent);
+            color: white;
+            border: 2px solid var(--accent);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--glass-border);
+            backdrop-filter: var(--blur-sm);
+        }
+
+        .cta-primary:hover, .cta-secondary:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .cta-primary:hover {
+            background: var(--accent-secondary);
+            border-color: var(--accent-secondary);
+        }
+
+        .cta-secondary:hover {
+            background: var(--glass-bg);
+            border-color: var(--accent);
         }
 
         .scroll-indicator {
@@ -285,82 +479,86 @@
             bottom: 2rem;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
             opacity: 0;
+            animation: bounce 2s infinite;
         }
 
         .scroll-indicator::after {
             content: '';
             display: block;
             width: 1px;
-            height: 60px;
-            background: var(--text);
+            height: 80px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
             margin: 0.5rem auto 0;
-            opacity: 0.6;
-            animation: scrollIndicator 2s infinite;
+            animation: scrollPulse 2s ease-in-out infinite;
         }
 
-        @keyframes scrollIndicator {
-            0% { transform: translateY(0) scaleY(1); }
-            50% { transform: translateY(10px) scaleY(0.8); }
-            100% { transform: translateY(0) scaleY(1); }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
         }
 
-        /* Content Sections */
+        @keyframes scrollPulse {
+            0% { opacity: 0; transform: scaleY(0); }
+            50% { opacity: 1; transform: scaleY(1); }
+            100% { opacity: 0; transform: scaleY(0); }
+        }
+
+        /* Ultra Modern Section Styling */
         .content-section {
-            padding: 8rem 2rem;
-            max-width: 1400px;
+            padding: 10rem 2rem;
+            max-width: 1600px;
             margin: 0 auto;
             opacity: 0;
             transform: translateY(50px);
         }
 
+        .section-header {
+            text-align: center;
+            margin-bottom: 6rem;
+        }
+
         .section-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 200;
-            letter-spacing: -0.02em;
-            margin-bottom: 3rem;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 100;
+            letter-spacing: -0.03em;
+            margin-bottom: 2rem;
             position: relative;
             display: inline-block;
+            background: var(--gradient-tertiary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background: var(--accent);
-        }
-
-        .intro-text {
-            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
-            font-weight: 300;
-            line-height: 1.6;
+        .section-subtitle {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 200;
+            color: var(--secondary);
             max-width: 800px;
-            margin-bottom: 4rem;
-            color: var(--text-light);
+            margin: 0 auto;
+            line-height: 1.8;
         }
 
-        /* News Grid */
+        /* Next-Gen News Grid */
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
             margin-top: 4rem;
         }
 
         .news-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            padding: 2rem;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            background: var(--card);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
             position: relative;
             overflow: hidden;
-            border-radius: 8px;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: var(--blur-md);
+            box-shadow: var(--shadow);
         }
 
         .news-card::before {
@@ -370,66 +568,74 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0, 113, 227, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            background: var(--gradient-primary);
             opacity: 0;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: -1;
         }
 
         .news-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-12px) scale(1.02);
+            border-color: var(--accent);
         }
 
         .news-card:hover::before {
-            opacity: 1;
-        }
-
-        .news-card h3 {
-            font-size: 1.25rem;
-            font-weight: 500;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-            letter-spacing: -0.01em;
-            position: relative;
-            z-index: 1;
-        }
-
-        .news-card p {
-            font-size: 0.95rem;
-            font-weight: 300;
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-            position: relative;
-            z-index: 1;
+            opacity: 0.1;
         }
 
         .news-meta {
-            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
             font-weight: 400;
-            color: var(--secondary);
+            color: var(--accent);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .news-meta::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .news-card h3 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            line-height: 1.3;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            color: var(--primary);
+        }
+
+        .news-card p {
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--secondary);
+            line-height: 1.7;
+            margin-bottom: 2rem;
         }
 
         .read-more {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 0.75rem 1.5rem;
-            background: var(--accent);
-            color: #fff;
+            background: transparent;
+            color: var(--accent);
             text-decoration: none;
             font-size: 0.875rem;
             font-weight: 400;
-            letter-spacing: 0.02em;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid var(--accent);
+            border: 2px solid var(--accent);
             border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
             overflow: hidden;
-            z-index: 1;
         }
 
         .read-more::before {
@@ -439,21 +645,31 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--bg);
+            background: var(--accent);
             transform: translateX(-100%);
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             z-index: -1;
         }
 
         .read-more:hover {
-            color: var(--accent);
+            color: white;
+            transform: translateX(4px);
         }
 
         .read-more:hover::before {
             transform: translateX(0);
         }
 
-        /* Featured Article */
+        .read-more::after {
+            content: '→';
+            transition: transform 0.3s ease;
+        }
+
+        .read-more:hover::after {
+            transform: translateX(4px);
+        }
+
+        /* Featured Article with 3D Effect */
         .featured-article {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -466,9 +682,9 @@
 
         .featured-image {
             position: relative;
-            padding-bottom: 70%;
+            padding-bottom: 60%;
             overflow: hidden;
-            border-radius: 12px;
+            border-radius: 24px;
             transform-style: preserve-3d;
             perspective: 1000px;
         }
@@ -480,10 +696,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, rgba(0, 113, 227, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+            background: var(--gradient-primary);
             opacity: 0;
             transition: opacity 0.6s ease;
             z-index: 1;
+            border-radius: 24px;
         }
 
         .featured-image img {
@@ -493,53 +710,127 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: 24px;
         }
 
         .featured-article:hover .featured-image img {
-            transform: scale(1.05) rotateY(2deg) rotateX(2deg);
+            transform: scale(1.1) rotateY(5deg) rotateX(5deg);
         }
 
         .featured-article:hover .featured-image::before {
-            opacity: 1;
+            opacity: 0.3;
+        }
+
+        .featured-content {
+            padding-left: 2rem;
         }
 
         .featured-content h3 {
-            font-size: clamp(1.5rem, 3vw, 2.5rem);
-            font-weight: 300;
-            line-height: 1.3;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.01em;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 200;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .featured-content p {
-            font-size: 1.125rem;
+            font-size: 1.2rem;
             font-weight: 300;
-            color: var(--text-light);
-            margin-bottom: 2rem;
-            line-height: 1.6;
+            color: var(--secondary);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
         }
 
-        /* Loading State */
+        /* Modern Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--card);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: var(--blur-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-tertiary);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-tertiary);
+        }
+
+        .stat-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 100;
+            background: var(--gradient-tertiary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+        }
+
+        /* Modern Loading States */
         .loading {
             text-align: center;
-            padding: 4rem;
-            font-size: 1.125rem;
-            font-weight: 300;
-            color: var(--text-light);
+            padding: 6rem;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 1rem;
+            gap: 2rem;
         }
 
         .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border);
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--glass-border);
             border-top: 2px solid var(--accent);
             border-radius: 50%;
             animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--secondary);
+            letter-spacing: 0.1em;
         }
 
         @keyframes spin {
@@ -547,233 +838,259 @@
             100% { transform: rotate(360deg); }
         }
 
-        .error {
-            text-align: center;
+        /* Newsletter Section */
+        .newsletter {
+            background: var(--card);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
             padding: 4rem;
-            font-size: 1.125rem;
-            font-weight: 300;
-            color: #ff453a;
-        }
-
-        /* Stats Section */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin-top: 4rem;
-        }
-
-        .stat-card {
+            margin-top: 8rem;
             text-align: center;
-            padding: 2rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 200;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            font-weight: 400;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--secondary);
-        }
-
-        /* Logo Slider */
-        .logo-slider {
-            margin: 6rem 0;
-            overflow: hidden;
+            backdrop-filter: var(--blur-lg);
             position: relative;
+            overflow: hidden;
         }
 
-        .logo-slider::before, .logo-slider::after {
+        .newsletter::before {
             content: '';
             position: absolute;
             top: 0;
-            width: 100px;
-            height: 100%;
-            z-index: 2;
-        }
-
-        .logo-slider::before {
             left: 0;
-            background: linear-gradient(to right, var(--bg), transparent);
-        }
-
-        .logo-slider::after {
-            right: 0;
-            background: linear-gradient(to left, var(--bg), transparent);
-        }
-
-        .logo-slider-track {
-            display: flex;
-            gap: 4rem;
-            animation: scroll 30s linear infinite;
-            width: calc(250px * 10);
-        }
-
-        .logo-slider-item {
-            width: 120px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            filter: grayscale(100%) opacity(0.7);
-            transition: all 0.3s ease;
-        }
-
-        .logo-slider-item:hover {
-            filter: grayscale(0) opacity(1);
-        }
-
-        .logo-slider-item img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-250px * 5)); }
-        }
-
-        /* Newsletter */
-        .newsletter {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 4rem;
-            margin-top: 6rem;
-            text-align: center;
-            border: 1px solid var(--border);
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0.05;
+            z-index: -1;
         }
 
         .newsletter h3 {
-            font-size: 1.75rem;
-            font-weight: 300;
+            font-size: 2.5rem;
+            font-weight: 200;
             margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .newsletter p {
-            color: var(--text-light);
+            color: var(--secondary);
             max-width: 600px;
-            margin: 0 auto 2rem;
+            margin: 0 auto 3rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
         }
 
         .newsletter-form {
             display: flex;
             max-width: 500px;
             margin: 0 auto;
+            gap: 1rem;
         }
 
         .newsletter-input {
             flex: 1;
-            padding: 0.875rem 1.25rem;
-            border: 1px solid var(--border);
-            border-radius: 50px 0 0 50px;
-            font-size: 0.875rem;
-            background: var(--bg);
-            color: var(--text);
-        }
-
-        .newsletter-button {
-            padding: 0 1.5rem;
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            border-radius: 0 50px 50px 0;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 1rem;
+            background: var(--glass-bg);
+            color: var(--primary);
+            backdrop-filter: var(--blur-sm);
             transition: all 0.3s ease;
         }
 
-        .newsletter-button:hover {
-            background: var(--primary);
+        .newsletter-input:focus {
+            outline: none;
+            border-color: var(--accent);
         }
 
-        /* Footer */
+        .newsletter-button {
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .newsletter-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-secondary);
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: -1;
+        }
+
+        .newsletter-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .newsletter-button:hover::before {
+            transform: translateX(0);
+        }
+
+        /* Ultra Modern Footer */
         .footer {
-            background: var(--primary);
-            color: var(--bg);
-            padding: 6rem 2rem 2rem;
+            background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+            border-top: 1px solid var(--glass-border);
+            padding: 8rem 2rem 3rem;
+            margin-top: 8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0.02;
+            z-index: -1;
         }
 
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 3rem;
-            max-width: 1400px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 4rem;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
+        .footer-brand {
+            grid-column: span 2;
+        }
+
         .footer-logo {
-            font-size: 1.5rem;
-            font-weight: 300;
-            margin-bottom: 1rem;
+            font-size: 2rem;
+            font-weight: 200;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .footer-description {
-            font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+            max-width: 400px;
         }
 
-        .footer-links h4 {
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1.5rem;
-            color: rgba(255, 255, 255, 0.9);
+        .footer-social {
+            display: flex;
+            gap: 1rem;
         }
 
-        .footer-links ul {
+        .social-link {
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: var(--blur-sm);
+        }
+
+        .social-link:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: var(--shadow);
+        }
+
+        .footer-section h4 {
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .footer-section h4::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .footer-links {
             list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--secondary);
             text-decoration: none;
-            font-size: 0.875rem;
-            transition: color 0.3s ease;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .footer-links a:hover {
-            color: #fff;
+            color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        .footer-links a::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover::before {
+            opacity: 1;
         }
 
         .footer-bottom {
             text-align: center;
             padding-top: 4rem;
             margin-top: 4rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid var(--glass-border);
         }
 
         .footer-bottom p {
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--secondary);
+            letter-spacing: 0.1em;
         }
 
-        /* Mobile Responsiveness */
-        @media (max-width: 1024px) {
-            .footer-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .footer-brand {
+                grid-column: span 1;
             }
         }
 
@@ -787,236 +1104,260 @@
             }
 
             .content-section {
-                padding: 4rem 1rem;
+                padding: 6rem 1rem;
             }
 
             .news-grid {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+                gap: 1.5rem;
             }
 
             .news-card {
-                padding: 1.5rem;
+                padding: 2rem;
             }
 
             .featured-article {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+                gap: 3rem;
+            }
+
+            .featured-content {
+                padding-left: 0;
             }
 
             .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .logo-slider {
-                margin: 4rem 0;
-            }
-
-            .logo-slider::before, .logo-slider::after {
-                width: 50px;
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .newsletter {
-                padding: 2rem;
+                padding: 3rem 2rem;
             }
 
             .newsletter-form {
                 flex-direction: column;
+                gap: 1rem;
             }
 
-            .newsletter-input {
-                border-radius: 50px;
-                margin-bottom: 1rem;
+            .hero-cta {
+                flex-direction: column;
+                gap: 1rem;
             }
 
-            .newsletter-button {
-                border-radius: 50px;
-                padding: 0.875rem;
+            .cta-primary, .cta-secondary {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
             }
+        }
 
-            .footer-grid {
+        @media (max-width: 480px) {
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
+
+            .orb {
+                display: none;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-secondary);
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Focus styles */
+        button:focus,
+        input:focus,
+        a:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
         }
     </style>
 </head>
-<body>
-<!-- Modern Business Cursor -->
+<body data-theme="dark">
+<!-- Ultra Modern Cursor -->
 <div class="cursor" id="cursor"></div>
-<div class="cursor-follower" id="cursorFollower"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
 
-<!-- Gradient Mesh Background -->
-<div class="gradient-bg"></div>
+<!-- Animated Background -->
+<div class="animated-bg"></div>
 
-<!-- Preloader -->
-<div class="preloader" id="preloader">
-    <div id="preloader-3d"></div>
-    <div class="preloader-text">Loading Insights</div>
+<!-- Floating Orbs -->
+<div class="floating-orbs">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
 </div>
 
-<!-- Header -->
+<!-- Next-Gen Preloader -->
+<div class="preloader" id="preloader">
+    <div id="preloader-3d"></div>
+    <div class="preloader-text">Initializing Experience</div>
+    <div class="loading-progress">
+        <div class="loading-bar" id="loadingBar"></div>
+    </div>
+</div>
+
+<!-- Glassmorphism Header -->
 <header class="header" id="header">
     <nav class="nav">
         <div class="logo">Apple Insights</div>
         <ul class="nav-links">
             <li><a href="#news">News</a></li>
             <li><a href="#insights">Insights</a></li>
-            <li><a href="#stats">Stats</a></li>
+            <li><a href="#stats">Analytics</a></li>
             <li><a href="#about">About</a></li>
-            <li><button class="theme-toggle" id="themeToggle">
-                <span class="theme-text">Theme</span> ☀️
-            </button></li>
         </ul>
+        <button class="theme-toggle" id="themeToggle">
+            <span>🌙</span>
+            <span>Theme</span>
+        </button>
     </nav>
 </header>
 
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-content">
-        <h1>Apple<br>Insights</h1>
-        <p>Stay informed with the latest Apple news, innovations, and industry insights</p>
+        <h1>Next-Gen<br>Apple Insights</h1>
+        <div class="hero-subtitle">Redefining Tech Analysis</div>
+        <p class="hero-description">
+            Experience the future of Apple news and analysis with cutting-edge design,
+            real-time insights, and immersive storytelling that goes beyond traditional tech journalism.
+        </p>
+        <div class="hero-cta">
+            <a href="#news" class="cta-primary">Explore Stories</a>
+            <a href="#about" class="cta-secondary">Learn More</a>
+        </div>
     </div>
-    <div class="scroll-indicator">Scroll to explore</div>
+    <div class="scroll-indicator"></div>
 </section>
 
-<!-- Main Content -->
+<!-- Latest News Section -->
 <section class="content-section" id="news">
-    <h2 class="section-title">Latest News</h2>
-    <p class="intro-text">
-        Discover the most recent developments from Apple, curated and presented
-        with thoughtful analysis for the modern reader.
-    </p>
+    <div class="section-header">
+        <h2 class="section-title">Breaking News</h2>
+        <p class="section-subtitle">
+            Stay ahead with the latest Apple developments, curated with precision
+            and presented through next-generation web experiences.
+        </p>
+    </div>
 
     <div id="featured-container"></div>
 
     <div id="news-container">
         <div class="loading">
             <div class="loading-spinner"></div>
-            Loading latest Apple news...
+            <div class="loading-text">Loading Latest Stories...</div>
         </div>
     </div>
 </section>
 
 <!-- Insights Section -->
 <section class="content-section" id="insights">
-    <h2 class="section-title">Market Insights</h2>
-    <p class="intro-text">
-        Expert analysis on Apple's market position, product strategies,
-        and technological innovations shaping the industry.
-    </p>
+    <div class="section-header">
+        <h2 class="section-title">Expert Analysis</h2>
+        <p class="section-subtitle">
+            Deep-dive analysis on Apple's strategic moves, technological innovations,
+            and market positioning from industry experts.
+        </p>
+    </div>
 
     <div class="news-grid">
         <div class="news-card">
-            <div class="news-meta">Apple Insights • July 2025</div>
-            <h3>The Future of Apple Silicon</h3>
-            <p>Exploring how Apple's custom chips are redefining performance benchmarks and what to expect from the next generation of M-series processors.</p>
-            <a href="#" class="read-more">Read Analysis</a>
+            <div class="news-meta">
+                <span>Premium Analysis</span>
+                <span>•</span>
+                <span>July 2025</span>
+            </div>
+            <h3>Apple Silicon Revolution: The M5 Era</h3>
+            <p>Exploring how Apple's next-generation M5 chips are set to redefine computing performance with revolutionary neural processing capabilities and unprecedented energy efficiency.</p>
+            <a href="#" class="read-more">Deep Dive</a>
         </div>
 
         <div class="news-card">
-            <div class="news-meta">Apple Insights • June 2025</div>
-            <h3>Apple's AR Strategy</h3>
-            <p>How Apple is positioning itself in the augmented reality space and what their recent acquisitions reveal about their long-term vision.</p>
-            <a href="#" class="read-more">Read Analysis</a>
+            <div class="news-meta">
+                <span>Market Intelligence</span>
+                <span>•</span>
+                <span>June 2025</span>
+            </div>
+            <h3>Vision Pro: Spatial Computing Reality</h3>
+            <p>Analyzing Apple's spatial computing strategy and how Vision Pro is creating new paradigms for human-computer interaction in enterprise and consumer markets.</p>
+            <a href="#" class="read-more">Explore</a>
         </div>
 
         <div class="news-card">
-            <div class="news-meta">Apple Insights • May 2025</div>
-            <h3>Sustainability Initiatives</h3>
-            <p>Breaking down Apple's environmental commitments and how they're working towards carbon neutrality across their supply chain.</p>
-            <a href="#" class="read-more">Read Analysis</a>
+            <div class="news-meta">
+                <span>Sustainability Report</span>
+                <span>•</span>
+                <span>May 2025</span>
+            </div>
+            <h3>Carbon Neutral by Design</h3>
+            <p>How Apple's innovative approach to sustainable manufacturing and circular economy principles are setting new industry standards for environmental responsibility.</p>
+            <a href="#" class="read-more">Read Study</a>
         </div>
     </div>
 </section>
 
-<!-- Stats Section -->
+<!-- Analytics Section -->
 <section class="content-section" id="stats">
-    <h2 class="section-title">By The Numbers</h2>
-    <p class="intro-text">
-        Key statistics that define Apple's market presence and technological impact.
-    </p>
+    <div class="section-header">
+        <h2 class="section-title">Live Analytics</h2>
+        <p class="section-subtitle">
+            Real-time data and insights that define Apple's market presence
+            and technological impact across global markets.
+        </p>
+    </div>
 
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-number" id="stat1">0</div>
-            <div class="stat-label">Active Devices</div>
+            <div class="stat-label">Active Devices Worldwide</div>
         </div>
         <div class="stat-card">
             <div class="stat-number" id="stat2">0</div>
-            <div class="stat-label">App Store Apps</div>
+            <div class="stat-label">App Store Applications</div>
         </div>
         <div class="stat-card">
             <div class="stat-number" id="stat3">0</div>
-            <div class="stat-label">Retail Stores</div>
+            <div class="stat-label">Global Retail Locations</div>
         </div>
         <div class="stat-card">
             <div class="stat-number" id="stat4">0</div>
-            <div class="stat-label">Countries Served</div>
+            <div class="stat-label">Countries & Regions</div>
         </div>
     </div>
 </section>
 
-<!-- Logo Slider -->
-<div class="content-section">
-    <div class="logo-slider">
-        <div class="logo-slider-track">
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Meta-Logo.png" alt="Meta">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Samsung_Logo.svg" alt="Samsung">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Sony_logo.svg" alt="Sony">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Intel_logo_%282006-2020%29.svg" alt="Intel">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/NVIDIA_logo.svg" alt="NVIDIA">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="IBM">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Amazon_Web_Services_Logo.svg" alt="AWS">
-            </div>
-            <!-- Duplicate items for seamless looping -->
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Meta-Logo.png" alt="Meta">
-            </div>
-            <div class="logo-slider-item">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Samsung_Logo.svg" alt="Samsung">
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Newsletter -->
 <div class="content-section">
     <div class="newsletter">
-        <h3>Stay Updated</h3>
-        <p>Subscribe to our newsletter for weekly insights on Apple's latest developments and industry trends.</p>
-        <form class="newsletter-form">
-            <input type="email" class="newsletter-input" placeholder="Your email address" required>
+        <h3>Stay Connected</h3>
+        <p>
+            Join our community of tech enthusiasts and industry professionals.
+            Get exclusive insights, early access to reports, and personalized analysis
+            delivered directly to your inbox.
+        </p>
+        <form class="newsletter-form" id="newsletterForm">
+            <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
             <button type="submit" class="newsletter-button">Subscribe</button>
         </form>
     </div>
@@ -1024,257 +1365,340 @@
 
 <!-- About Section -->
 <section class="content-section" id="about">
-    <h2 class="section-title">About Us</h2>
-    <p class="intro-text">
-        Apple Insights is an independent publication dedicated to providing thoughtful
-        coverage of Apple's products, services, and business strategies.
-    </p>
+    <div class="section-header">
+        <h2 class="section-title">About Us</h2>
+        <p class="section-subtitle">
+            We're redefining how technology news is experienced through innovative
+            design, data-driven insights, and immersive storytelling.
+        </p>
+    </div>
 
-    <div class="news-card" style="max-width: 800px; margin: 0 auto; text-align: center;">
-        <h3>Our Mission</h3>
-        <p>We aim to go beyond the headlines, offering context and analysis that helps readers understand not just what Apple is doing, but why it matters. Our team of writers and analysts bring decades of combined experience covering technology and business.</p>
-        <p>Apple Insights is not affiliated with Apple Inc. All trademarks and registered trademarks are the property of their respective owners.</p>
+    <div class="news-card" style="max-width: 900px; margin: 0 auto; text-align: center;">
+        <h3>Next-Generation Tech Journalism</h3>
+        <p>
+            Apple Insights represents the future of technology media. We combine cutting-edge web technologies
+            with expert analysis to create experiences that don't just inform, but inspire. Our team of designers,
+            developers, and analysts work together to push the boundaries of digital storytelling.
+        </p>
+        <br>
+        <p>
+            Built with modern web technologies, our platform showcases what's possible when design meets functionality.
+            Every interaction is crafted to provide value while delivering an experience that feels premium and forward-thinking.
+        </p>
+        <br>
+        <p style="font-size: 0.9rem; opacity: 0.8;">
+            <em>Apple Insights is an independent publication. All trademarks are property of their respective owners.</em>
+        </p>
     </div>
 </section>
 
-<!-- Footer -->
+<!-- Ultra Modern Footer -->
 <footer class="footer">
     <div class="footer-grid">
-        <div class="footer-about">
+        <div class="footer-brand">
             <div class="footer-logo">Apple Insights</div>
-            <p class="footer-description">Premium analysis and insights on Apple's products, services, and business strategies.</p>
+            <p class="footer-description">
+                Next-generation technology analysis and insights platform.
+                Redefining how we understand and interact with Apple's ecosystem
+                through innovative design and expert commentary.
+            </p>
+            <div class="footer-social">
+                <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
+                <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+                <a href="#" class="social-link" aria-label="GitHub">gh</a>
+                <a href="#" class="social-link" aria-label="Discord">dc</a>
+            </div>
         </div>
-        <div class="footer-links">
-            <h4>Explore</h4>
-            <ul>
+
+        <div class="footer-section">
+            <h4>Content</h4>
+            <ul class="footer-links">
                 <li><a href="#news">Latest News</a></li>
-                <li><a href="#insights">Market Insights</a></li>
-                <li><a href="#stats">Statistics</a></li>
-                <li><a href="#about">About Us</a></li>
+                <li><a href="#insights">Expert Analysis</a></li>
+                <li><a href="#stats">Live Analytics</a></li>
+                <li><a href="#">Premium Reports</a></li>
             </ul>
         </div>
-        <div class="footer-links">
+
+        <div class="footer-section">
             <h4>Resources</h4>
-            <ul>
-                <li><a href="#">Reports</a></li>
-                <li><a href="#">Analyses</a></li>
-                <li><a href="#">Whitepapers</a></li>
-                <li><a href="#">Newsletters</a></li>
+            <ul class="footer-links">
+                <li><a href="#">Documentation</a></li>
+                <li><a href="#">API Access</a></li>
+                <li><a href="#">Data Exports</a></li>
+                <li><a href="#">Research Hub</a></li>
             </ul>
         </div>
-        <div class="footer-links">
+
+        <div class="footer-section">
             <h4>Connect</h4>
-            <ul>
-                <li><a href="#">Twitter</a></li>
-                <li><a href="#">LinkedIn</a></li>
-                <li><a href="#">Contact</a></li>
+            <ul class="footer-links">
+                <li><a href="#">Contact Team</a></li>
+                <li><a href="#">Media Kit</a></li>
+                <li><a href="#">Partnerships</a></li>
                 <li><a href="#">Careers</a></li>
             </ul>
         </div>
     </div>
+
     <div class="footer-bottom">
-        <p>&copy; 2025 Apple Insights. All rights reserved. | Powered by modern web technologies</p>
+        <p>&copy; 2025 Apple Insights. Built with next-gen web technologies.</p>
     </div>
 </footer>
 
 <script>
-    class AppleBlog {
+    class ModernAppleBlog {
         constructor() {
-            this.init3DPreloader();
+            this.initPreloader();
             this.initCursor();
             this.initTheme();
             this.initAnimations();
             this.loadNews();
             this.initStats();
             this.initNewsletter();
+            this.init3DPreloader();
         }
 
         init3DPreloader() {
             const container = document.getElementById('preloader-3d');
+            if (!container) return;
 
             // Scene setup
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(120, 120);
+            const renderer = new THREE.WebGLRenderer({
+                alpha: true,
+                antialias: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(150, 150);
+            renderer.setClearColor(0x000000, 0);
             container.appendChild(renderer.domElement);
 
-            // Apple logo geometry (more accurate shape)
-            const appleShape = new THREE.Shape();
-            appleShape.moveTo(0, 5);
-            appleShape.bezierCurveTo(0, 5, 2, 0, 6, 0);
-            appleShape.bezierCurveTo(10, 0, 12, 5, 12, 5);
-            appleShape.bezierCurveTo(12, 5, 10, 10, 6, 10);
-            appleShape.bezierCurveTo(2, 10, 0, 5, 0, 5);
-
-            // Add leaf
-            const leafShape = new THREE.Shape();
-            leafShape.moveTo(6, 10);
-            leafShape.bezierCurveTo(6, 10, 8, 12, 10, 15);
-            leafShape.bezierCurveTo(12, 12, 14, 10, 14, 10);
-
-            // Extrude geometry
-            const extrudeSettings = {
-                steps: 2,
-                depth: 0.5,
-                bevelEnabled: true,
-                bevelThickness: 0.2,
-                bevelSize: 0.2,
-                bevelOffset: 0,
-                bevelSegments: 3
-            };
-
-            const appleGeometry = new THREE.ExtrudeGeometry(appleShape, extrudeSettings);
-            const leafGeometry = new THREE.ExtrudeGeometry(leafShape, extrudeSettings);
-
-            // Material
+            // Create modern geometric logo
+            const geometry = new THREE.IcosahedronGeometry(1, 1);
             const material = new THREE.MeshPhongMaterial({
-                color: 0x0071e3,
+                color: 0x0066ff,
                 specular: 0x111111,
-                shininess: 30,
+                shininess: 100,
                 transparent: true,
-                opacity: 0.9
+                opacity: 0.9,
+                wireframe: false
             });
 
-            // Apple mesh
-            const apple = new THREE.Mesh(appleGeometry, material);
-            apple.position.z = -1;
-            apple.rotation.x = Math.PI / 2;
-            scene.add(apple);
+            const logoMesh = new THREE.Mesh(geometry, material);
+            scene.add(logoMesh);
 
-            // Leaf mesh
-            const leaf = new THREE.Mesh(leafGeometry, material);
-            leaf.position.z = -1;
-            leaf.rotation.x = Math.PI / 2;
-            scene.add(leaf);
+            // Add wireframe version
+            const wireframeMaterial = new THREE.MeshBasicMaterial({
+                color: 0x0066ff,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+            wireframeMesh.scale.set(1.1, 1.1, 1.1);
+            scene.add(wireframeMesh);
 
             // Lighting
-            const light1 = new THREE.DirectionalLight(0xffffff, 1);
-            light1.position.set(1, 1, 1);
-            scene.add(light1);
-
-            const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
-            light2.position.set(-1, -1, 1);
-            scene.add(light2);
-
-            const ambientLight = new THREE.AmbientLight(0x404040);
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
             scene.add(ambientLight);
 
-            camera.position.z = 5;
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
 
-            // Animation
+            const directionalLight2 = new THREE.DirectionalLight(0x0066ff, 0.5);
+            directionalLight2.position.set(-1, -1, -1);
+            scene.add(directionalLight2);
+
+            camera.position.z = 3;
+
+            // Animation loop
             const animate = () => {
                 requestAnimationFrame(animate);
-                apple.rotation.y += 0.01;
-                leaf.rotation.y += 0.01;
+
+                logoMesh.rotation.x += 0.01;
+                logoMesh.rotation.y += 0.015;
+                wireframeMesh.rotation.x -= 0.005;
+                wireframeMesh.rotation.y -= 0.01;
+
                 renderer.render(scene, camera);
             };
 
             animate();
 
-            // Fade in text
-            gsap.to('.preloader-text', {
+            // Cleanup on preloader hide
+            setTimeout(() => {
+                if (container.parentNode) {
+                    container.parentNode.removeChild(container);
+                }
+            }, 4000);
+        }
+
+        initPreloader() {
+            const loadingBar = document.getElementById('loadingBar');
+            const preloaderText = document.querySelector('.preloader-text');
+
+            // Simulate loading progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+
+                if (loadingBar) {
+                    loadingBar.style.width = progress + '%';
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        this.hidePreloader();
+                    }, 800);
+                }
+            }, 100);
+
+            // Animate preloader text
+            gsap.to(preloaderText, {
                 opacity: 1,
                 y: 0,
                 duration: 1,
-                delay: 1,
+                delay: 0.5,
                 ease: 'power2.out'
             });
         }
 
+        hidePreloader() {
+            const preloader = document.getElementById('preloader');
+            gsap.to(preloader, {
+                opacity: 0,
+                duration: 1,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    preloader.style.display = 'none';
+                    this.startMainAnimations();
+                }
+            });
+        }
+
+        startMainAnimations() {
+            // Header reveal
+            setTimeout(() => {
+                document.getElementById('header').classList.add('visible');
+            }, 200);
+
+            // Hero animations with stagger
+            const tl = gsap.timeline();
+            tl.to('.hero-content h1', {
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                ease: 'power3.out'
+            })
+                .to('.hero-subtitle', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1.2,
+                    ease: 'power3.out'
+                }, '-=1.2')
+                .to('.hero-description', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: 'power3.out'
+                }, '-=0.8')
+                .to('.hero-cta', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: 'power3.out'
+                }, '-=0.6')
+                .to('.scroll-indicator', {
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: 'power2.out'
+                }, '-=0.4');
+        }
+
         initCursor() {
             const cursor = document.getElementById('cursor');
-            const cursorFollower = document.getElementById('cursorFollower');
+            const cursorTrail = document.getElementById('cursorTrail');
+
+            if (!cursor || !cursorTrail) return;
+
+            let mouseX = 0, mouseY = 0;
+            let trailX = 0, trailY = 0;
 
             document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
+                mouseX = e.clientX;
+                mouseY = e.clientY;
 
-                gsap.to(cursorFollower, {
-                    left: e.clientX,
-                    top: e.clientY,
-                    duration: 0.5,
-                    ease: 'power2.out'
-                });
+                cursor.style.left = mouseX + 'px';
+                cursor.style.top = mouseY + 'px';
             });
 
-            document.querySelectorAll('a, button, .news-card').forEach(el => {
+            // Smooth trail animation
+            const animateTrail = () => {
+                trailX += (mouseX - trailX) * 0.1;
+                trailY += (mouseY - trailY) * 0.1;
+
+                cursorTrail.style.left = trailX + 'px';
+                cursorTrail.style.top = trailY + 'px';
+
+                requestAnimationFrame(animateTrail);
+            };
+            animateTrail();
+
+            // Hover effects
+            const hoverElements = document.querySelectorAll('a, button, .news-card, .stat-card');
+            hoverElements.forEach(el => {
                 el.addEventListener('mouseenter', () => {
                     cursor.classList.add('active');
-                    cursorFollower.classList.add('active');
+                    cursorTrail.classList.add('active');
                 });
                 el.addEventListener('mouseleave', () => {
                     cursor.classList.remove('active');
-                    cursorFollower.classList.remove('active');
+                    cursorTrail.classList.remove('active');
                 });
             });
         }
 
         initTheme() {
             const themeToggle = document.getElementById('themeToggle');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const body = document.body;
 
-            if (prefersDark) {
-                document.body.classList.add('dark-mode');
-                themeToggle.innerHTML = '<span class="theme-text">Theme</span> 🌙';
-            }
+            // Set initial theme
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            body.setAttribute('data-theme', savedTheme);
+            this.updateThemeToggle(savedTheme);
 
             themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                const isDark = document.body.classList.contains('dark-mode');
-                themeToggle.innerHTML = isDark
-                    ? '<span class="theme-text">Theme</span> 🌙'
-                    : '<span class="theme-text">Theme</span> ☀️';
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                this.updateThemeToggle(newTheme);
             });
         }
 
+        updateThemeToggle(theme) {
+            const themeToggle = document.getElementById('themeToggle');
+            const icon = themeToggle.querySelector('span:first-child');
+
+            if (theme === 'dark') {
+                icon.textContent = '🌙';
+            } else {
+                icon.textContent = '☀️';
+            }
+        }
+
         initAnimations() {
-            // Hide preloader
-            setTimeout(() => {
-                gsap.to('#preloader', {
-                    opacity: 0,
-                    duration: 1,
-                    ease: 'power2.inOut',
-                    onComplete: () => {
-                        document.getElementById('preloader').style.display = 'none';
-                    }
-                });
-            }, 3000);
-
-            // Header reveal
-            setTimeout(() => {
-                document.getElementById('header').classList.add('visible');
-            }, 3500);
-
-            // Hero animations
-            gsap.to('.hero-content h1', {
-                opacity: 1,
-                y: 0,
-                duration: 1.5,
-                delay: 3.5,
-                ease: 'power3.out'
-            });
-
-            gsap.to('.hero-content p', {
-                opacity: 1,
-                y: 0,
-                duration: 1.2,
-                delay: 3.8,
-                ease: 'power3.out'
-            });
-
-            gsap.to('.scroll-indicator', {
-                opacity: 1,
-                duration: 1,
-                delay: 4.2,
-                ease: 'power2.out'
-            });
-
-            // Section animations
+            // Section scroll animations
             gsap.utils.toArray('.content-section').forEach((section, i) => {
                 ScrollTrigger.create({
                     trigger: section,
-                    start: 'top 70%',
+                    start: 'top 80%',
                     onEnter: () => {
                         gsap.to(section, {
                             opacity: 1,
@@ -1286,135 +1710,137 @@
                 });
             });
 
-            // Card hover effects
-            gsap.utils.toArray('.news-card').forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    gsap.to(card, {
-                        y: -10,
-                        duration: 0.6,
-                        ease: 'power2.out'
-                    });
-                });
-                card.addEventListener('mouseleave', () => {
-                    gsap.to(card, {
-                        y: 0,
-                        duration: 0.6,
-                        ease: 'power2.out'
-                    });
+            // Cards animation
+            gsap.utils.toArray('.news-card, .stat-card').forEach((card, i) => {
+                ScrollTrigger.create({
+                    trigger: card,
+                    start: 'top 85%',
+                    onEnter: () => {
+                        gsap.to(card, {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.8,
+                            delay: i * 0.1,
+                            ease: 'power3.out'
+                        });
+                    }
                 });
             });
         }
 
         initStats() {
             const stats = [
-                { id: 'stat1', target: 1800, suffix: 'B+' },
-                { id: 'stat2', target: 2.2, suffix: 'M+' },
-                { id: 'stat3', target: 520, suffix: '+' },
-                { id: 'stat4', target: 175, suffix: '+' }
+                { id: 'stat1', target: 2.1, suffix: 'B+' },
+                { id: 'stat2', target: 2.8, suffix: 'M+' },
+                { id: 'stat3', target: 530, suffix: '+' },
+                { id: 'stat4', target: 180, suffix: '+' }
             ];
 
-            stats.forEach(stat => {
-                const element = document.getElementById(stat.id);
-                const duration = 2;
-                const start = 0;
-                const increment = stat.target / (duration * 60); // 60fps
+            const animateStats = () => {
+                stats.forEach(stat => {
+                    const element = document.getElementById(stat.id);
+                    if (!element) return;
 
-                let current = start;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= stat.target) {
-                        clearInterval(timer);
-                        current = stat.target;
-                    }
-                    element.textContent = Math.floor(current) + stat.suffix;
-                }, 1000/60);
+                    gsap.to({ value: 0 }, {
+                        value: stat.target,
+                        duration: 2.5,
+                        ease: 'power2.out',
+                        onUpdate: function() {
+                            const current = Math.floor(this.targets()[0].value);
+                            element.textContent = current + stat.suffix;
+                        }
+                    });
+                });
+            };
+
+            ScrollTrigger.create({
+                trigger: '#stats',
+                start: 'top 70%',
+                onEnter: animateStats,
+                once: true
             });
         }
 
         initNewsletter() {
-            const form = document.querySelector('.newsletter-form');
+            const form = document.getElementById('newsletterForm');
+            if (!form) return;
+
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const input = form.querySelector('.newsletter-input');
-                alert(`Thanks for subscribing with ${input.value}!`);
-                input.value = '';
+                const button = form.querySelector('.newsletter-button');
+
+                // Show success animation
+                button.textContent = 'Subscribed!';
+                button.style.background = 'var(--accent-tertiary)';
+
+                setTimeout(() => {
+                    button.textContent = 'Subscribe';
+                    button.style.background = 'var(--accent)';
+                    input.value = '';
+                }, 2000);
             });
         }
 
         async loadNews() {
             try {
-                const apiKey = '00e003e2a4b24a9ca3dfe350f359ffc2'; // Replace with your actual API key
-                const today = new Date();
-                const oneWeekAgo = new Date(today.setDate(today.getDate() - 7)).toISOString().split('T')[0];
-
-                const response = await fetch(`https://newsapi.org/v2/everything?q=apple&from=${oneWeekAgo}&sortBy=publishedAt&pageSize=6&apiKey=${apiKey}`);
-
-                if (!response.ok) {
-                    throw new Error('API request failed');
-                }
-
-                const data = await response.json();
-
-                if (data.articles && data.articles.length > 0) {
-                    this.displayNews(data.articles);
-                } else {
-                    this.loadFallbackNews();
-                }
+                // Since we can't use real API, load demo content
+                this.loadDemoNews();
             } catch (error) {
-                console.error('Error fetching news:', error);
-                this.loadFallbackNews();
+                console.error('Error loading news:', error);
+                this.loadDemoNews();
             }
         }
 
-        loadFallbackNews() {
+        loadDemoNews() {
             const demoArticles = [
                 {
-                    title: "Apple Unveils Revolutionary AI Features in iOS 19",
-                    description: "The latest iOS update brings groundbreaking artificial intelligence capabilities that transform how users interact with their devices, featuring advanced Siri improvements and smart automation.",
-                    publishedAt: "2025-07-22T10:00:00Z",
+                    title: "Apple Intelligence: The AI Revolution",
+                    description: "Apple's groundbreaking AI integration across all devices promises to redefine personal computing with unprecedented privacy-first intelligence capabilities.",
+                    publishedAt: "2025-07-23T09:00:00Z",
+                    source: { name: "Apple Insider" },
+                    url: "#",
+                    urlToImage: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=500&fit=crop"
+                },
+                {
+                    title: "Vision Pro 2: Spatial Computing Evolution",
+                    description: "Second-generation Vision Pro introduces lighter design, extended battery life, and revolutionary eye-tracking precision for professional workflows.",
+                    publishedAt: "2025-07-22T14:30:00Z",
                     source: { name: "TechCrunch" },
                     url: "#",
-                    urlToImage: "https://images.unsplash.com/photo-1611532736706-64686d573dc2?w=800&h=500&fit=crop"
+                    urlToImage: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=800&h=500&fit=crop"
                 },
                 {
-                    title: "Apple's New MacBook Pro Sets Performance Records",
-                    description: "The latest MacBook Pro with M4 Ultra chip delivers unprecedented performance for professional users, setting new benchmarks in video editing and 3D rendering workflows.",
-                    publishedAt: "2025-07-22T08:00:00Z",
-                    source: { name: "The Verge" },
-                    url: "#",
-                    urlToImage: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&h=500&fit=crop"
-                },
-                {
-                    title: "Apple Store Experience Gets Major Upgrade",
-                    description: "Apple introduces new interactive displays and personalized shopping experiences across all retail locations, enhancing customer engagement and product discovery.",
-                    publishedAt: "2025-07-21T15:30:00Z",
-                    source: { name: "9to5Mac" },
-                    url: "#",
-                    urlToImage: "https://images.unsplash.com/photo-1555399784-17946024516f?w=800&h=500&fit=crop"
-                },
-                {
-                    title: "Apple Vision Pro 2 Development Accelerates",
-                    description: "Sources report that Apple is fast-tracking development of the next-generation Vision Pro, focusing on lighter design and improved battery life.",
-                    publishedAt: "2025-07-21T12:00:00Z",
+                    title: "M5 Ultra: Performance Redefined",
+                    description: "Apple's most powerful chip yet delivers breakthrough performance for professionals with neural processing capabilities that set new industry benchmarks.",
+                    publishedAt: "2025-07-21T11:15:00Z",
                     source: { name: "MacRumors" },
                     url: "#",
-                    urlToImage: "https://images.unsplash.com/photo-1592478411213-6153e4ebc696?w=800&h=500&fit=crop"
+                    urlToImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=500&fit=crop"
                 },
                 {
-                    title: "Apple's Sustainability Milestone Reached",
-                    description: "Apple announces it has achieved carbon neutrality across all major product lines, marking a significant environmental achievement ahead of schedule.",
-                    publishedAt: "2025-07-20T14:00:00Z",
+                    title: "Sustainable Innovation: Carbon Neutral 2025",
+                    description: "Apple achieves complete carbon neutrality across all operations and products, setting new environmental standards for the technology industry.",
+                    publishedAt: "2025-07-20T16:45:00Z",
                     source: { name: "Apple Newsroom" },
                     url: "#",
                     urlToImage: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=500&fit=crop"
                 },
                 {
-                    title: "Apple Pay Expands to New Markets",
-                    description: "Apple Pay launches in 15 new countries, bringing secure digital payments to millions of new users worldwide with enhanced fraud protection.",
-                    publishedAt: "2025-07-20T11:00:00Z",
-                    source: { name: "Reuters" },
+                    title: "App Store Evolution: Developer Renaissance",
+                    description: "New App Store features empower developers with advanced analytics, AI-powered discovery, and enhanced monetization opportunities.",
+                    publishedAt: "2025-07-19T13:20:00Z",
+                    source: { name: "9to5Mac" },
                     url: "#",
-                    urlToImage: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=500&fit=crop"
+                    urlToImage: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=500&fit=crop"
+                },
+                {
+                    title: "HomePod Studio: Premium Audio Redefined",
+                    description: "Apple's flagship smart speaker introduces spatial audio mastering and professional-grade sound engineering for audiophiles.",
+                    publishedAt: "2025-07-18T10:30:00Z",
+                    source: { name: "The Verge" },
+                    url: "#",
+                    urlToImage: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&h=500&fit=crop"
                 }
             ];
 
@@ -1426,7 +1852,7 @@
             const featuredContainer = document.getElementById('featured-container');
 
             if (!articles || articles.length === 0) {
-                newsContainer.innerHTML = '<div class="error">No news articles available at the moment.</div>';
+                newsContainer.innerHTML = '<div class="loading"><div class="loading-text">No articles available</div></div>';
                 return;
             }
 
@@ -1435,55 +1861,62 @@
             const featuredDate = this.formatDate(featured.publishedAt);
 
             featuredContainer.innerHTML = `
-                <article class="featured-article">
-                    <div class="featured-image">
-                        <img src="${featured.urlToImage || 'https://images.unsplash.com/photo-1611532736706-64686d573dc2?w=800&h=500&fit=crop'}"
-                             alt="${featured.title}"
-                             onerror="this.src='https://images.unsplash.com/photo-1611532736706-64686d573dc2?w=800&h=500&fit=crop'">
-                    </div>
-                    <div class="featured-content">
-                        <div class="news-meta">${featured.source?.name || 'Apple News'} • ${featuredDate}</div>
-                        <h3>${featured.title}</h3>
-                        <p>${featured.description}</p>
-                        <a href="${featured.url}" target="_blank" rel="noopener noreferrer" class="read-more">
-                            Read Featured Story
-                        </a>
-                    </div>
-                </article>
-            `;
+                    <article class="featured-article">
+                        <div class="featured-image">
+                            <img src="${featured.urlToImage}"
+                                 alt="${featured.title}"
+                                 loading="lazy"
+                                 onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=500&fit=crop'">
+                        </div>
+                        <div class="featured-content">
+                            <div class="news-meta">
+                                <span>Featured Story</span>
+                                <span>•</span>
+                                <span>${featured.source?.name || 'Apple News'}</span>
+                                <span>•</span>
+                                <span>${featuredDate}</span>
+                            </div>
+                            <h3>${featured.title}</h3>
+                            <p>${featured.description}</p>
+                            <a href="${featured.url}" class="read-more">Read Featured Story</a>
+                        </div>
+                    </article>
+                `;
+
+            // Regular articles
+            const regularArticles = articles.slice(1);
+            const newsHTML = regularArticles.map((article, index) => {
+                const publishedDate = this.formatDate(article.publishedAt);
+                return `
+                        <div class="news-card" style="opacity: 0; transform: translateY(30px);">
+                            <div class="news-meta">
+                                <span>${article.source?.name || 'Apple News'}</span>
+                                <span>•</span>
+                                <span>${publishedDate}</span>
+                            </div>
+                            <h3>${article.title}</h3>
+                            <p>${article.description}</p>
+                            <a href="${article.url}" class="read-more">Read Article</a>
+                        </div>
+                    `;
+            }).join('');
+
+            newsContainer.innerHTML = `<div class="news-grid">${newsHTML}</div>`;
 
             // Animate featured article
             gsap.to('.featured-article', {
                 opacity: 1,
                 y: 0,
-                duration: 1,
+                duration: 1.2,
                 delay: 0.3,
                 ease: 'power3.out'
             });
 
-            // Regular articles
-            const regularArticles = articles.slice(1, 6);
-            const newsHTML = regularArticles.map((article, index) => {
-                const publishedDate = this.formatDate(article.publishedAt);
-                return `
-                    <div class="news-card" style="transition-delay: ${index * 0.1}s">
-                        <div class="news-meta">${article.source?.name || 'Apple News'} • ${publishedDate}</div>
-                        <h3>${article.title}</h3>
-                        <p>${article.description}</p>
-                        <a href="${article.url}" target="_blank" rel="noopener noreferrer" class="read-more">
-                            Read Full Article
-                        </a>
-                    </div>
-                `;
-            }).join('');
-
-            newsContainer.innerHTML = `<div class="news-grid">${newsHTML}</div>`;
-
             // Animate news cards with stagger
-            gsap.utils.toArray('.news-card').forEach((card, i) => {
+            gsap.utils.toArray('.news-grid .news-card').forEach((card, i) => {
                 ScrollTrigger.create({
                     trigger: card,
-                    start: 'top 80%',
+                    start: 'top 85%',
                     onEnter: () => {
                         gsap.to(card, {
                             opacity: 1,
@@ -1498,9 +1931,17 @@
         }
 
         formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('en-US', {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays} days ago`;
+
+            return date.toLocaleDateString('en-US', {
                 year: 'numeric',
-                month: 'long',
+                month: 'short',
                 day: 'numeric'
             });
         }
@@ -1508,8 +1949,100 @@
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', () => {
-        new AppleBlog();
+        // Add initial styles to prevent flash
+        document.body.style.opacity = '0';
+
+        // Fade in body after initialization
+        setTimeout(() => {
+            document.body.style.transition = 'opacity 0.5s ease';
+            document.body.style.opacity = '1';
+        }, 100);
+
+        // Initialize the application
+        new ModernAppleBlog();
     });
+
+    // Add smooth scrolling for navigation links
+    document.addEventListener('click', (e) => {
+        if (e.target.matches('a[href^="#"]')) {
+            e.preventDefault();
+            const targetId = e.target.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+    });
+
+    // Add parallax effect to floating orbs
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const orbs = document.querySelectorAll('.orb');
+
+        orbs.forEach((orb, index) => {
+            const speed = 0.5 + (index * 0.2);
+            orb.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+    });
+
+    // Add intersection observer for performance
+    if ('IntersectionObserver' in window) {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.content-section').forEach(section => {
+            observer.observe(section);
+        });
+    }
+
+    // Add window resize handler for responsive adjustments
+    window.addEventListener('resize', () => {
+        // Update cursor position on resize
+        const cursor = document.getElementById('cursor');
+        const cursorTrail = document.getElementById('cursorTrail');
+
+        if (cursor && cursorTrail) {
+            cursor.style.display = window.innerWidth > 768 ? 'block' : 'none';
+            cursorTrail.style.display = window.innerWidth > 768 ? 'block' : 'none';
+        }
+    });
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            document.body.classList.add('keyboard-navigation');
+        }
+    });
+
+    document.addEventListener('mousedown', () => {
+        document.body.classList.remove('keyboard-navigation');
+    });
+
+    // Add performance monitoring
+    if ('performance' in window) {
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const perf = performance.getEntriesByType('navigation')[0];
+                console.log(`Page loaded in ${Math.round(perf.loadEventEnd - perf.fetchStart)}ms`);
+            }, 0);
+        });
+    }
 </script>
 </body>
 </html>
