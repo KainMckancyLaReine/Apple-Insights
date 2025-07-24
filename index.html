@@ -64,6 +64,7 @@
         html {
             font-size: 16px;
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
         body {
@@ -75,47 +76,57 @@
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            opacity: 0;
         }
 
-        /* Ultra Modern Cursor */
-        .cursor {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent);
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-            mix-blend-mode: difference;
+        /* Ultra Modern Cursor - only for desktop */
+        @media (min-width: 769px) {
+            .cursor {
+                position: fixed;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--accent);
+                pointer-events: none;
+                z-index: 9999;
+                transform: translate(-50%, -50%);
+                transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+                mix-blend-mode: difference;
+            }
+
+            .cursor-trail {
+                position: fixed;
+                width: 32px;
+                height: 32px;
+                border: 1px solid var(--accent);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9998;
+                transform: translate(-50%, -50%);
+                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+                backdrop-filter: var(--blur-sm);
+                opacity: 0.7;
+            }
+
+            .cursor.active {
+                width: 48px;
+                height: 48px;
+                background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            }
+
+            .cursor-trail.active {
+                width: 64px;
+                height: 64px;
+                background: var(--glass-bg);
+                border: 2px solid var(--accent);
+            }
         }
 
-        .cursor-trail {
-            position: fixed;
-            width: 32px;
-            height: 32px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9998;
-            transform: translate(-50%, -50%);
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            backdrop-filter: var(--blur-sm);
-            opacity: 0.7;
-        }
-
-        .cursor.active {
-            width: 48px;
-            height: 48px;
-            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-        }
-
-        .cursor-trail.active {
-            width: 64px;
-            height: 64px;
-            background: var(--glass-bg);
-            border: 2px solid var(--accent);
+        /* Mobile cursor hidden */
+        @media (max-width: 768px) {
+            .cursor, .cursor-trail {
+                display: none !important;
+            }
         }
 
         /* Animated Background */
@@ -143,7 +154,7 @@
             75% { background-position: 0% 100%, 100% 0%, 100% 100%, 0% 0%; }
         }
 
-        /* Floating Orbs */
+        /* Floating Orbs - hidden on mobile */
         .floating-orbs {
             position: fixed;
             top: 0;
@@ -154,36 +165,44 @@
             pointer-events: none;
         }
 
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--accent-tertiary) 0%, transparent 70%);
-            opacity: 0.1;
-            animation: float 20s ease-in-out infinite;
+        @media (min-width: 769px) {
+            .orb {
+                position: absolute;
+                border-radius: 50%;
+                background: radial-gradient(circle, var(--accent-tertiary) 0%, transparent 70%);
+                opacity: 0.1;
+                animation: float 20s ease-in-out infinite;
+            }
+
+            .orb:nth-child(1) {
+                width: 200px;
+                height: 200px;
+                top: 20%;
+                left: 10%;
+                animation-delay: 0s;
+            }
+
+            .orb:nth-child(2) {
+                width: 150px;
+                height: 150px;
+                top: 60%;
+                right: 15%;
+                animation-delay: -7s;
+            }
+
+            .orb:nth-child(3) {
+                width: 300px;
+                height: 300px;
+                bottom: 10%;
+                left: 50%;
+                animation-delay: -14s;
+            }
         }
 
-        .orb:nth-child(1) {
-            width: 200px;
-            height: 200px;
-            top: 20%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .orb:nth-child(2) {
-            width: 150px;
-            height: 150px;
-            top: 60%;
-            right: 15%;
-            animation-delay: -7s;
-        }
-
-        .orb:nth-child(3) {
-            width: 300px;
-            height: 300px;
-            bottom: 10%;
-            left: 50%;
-            animation-delay: -14s;
+        @media (max-width: 768px) {
+            .orb {
+                display: none;
+            }
         }
 
         @keyframes float {
@@ -362,8 +381,20 @@
             color: white;
         }
 
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
         /* Hero Section - Ultra Modern */
         .hero {
+            min-height: 100vh;
             height: 100vh;
             display: flex;
             align-items: center;
@@ -374,19 +405,10 @@
             overflow: hidden;
         }
 
-        .hero-bg-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.05;
-        }
-
         .hero-content {
             z-index: 1;
             max-width: 1000px;
+            width: 100%;
         }
 
         .hero-content h1 {
@@ -432,6 +454,7 @@
             align-items: center;
             opacity: 0;
             transform: translateY(30px);
+            flex-wrap: wrap;
         }
 
         .cta-primary, .cta-secondary {
@@ -444,6 +467,8 @@
             transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
             overflow: hidden;
+            min-width: 150px;
+            text-align: center;
         }
 
         .cta-primary {
@@ -544,7 +569,7 @@
         /* Next-Gen News Grid */
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
             margin-top: 4rem;
         }
@@ -594,6 +619,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .news-meta::before {
@@ -602,6 +628,7 @@
             height: 8px;
             border-radius: 50%;
             background: var(--accent);
+            flex-shrink: 0;
         }
 
         .news-card h3 {
@@ -715,7 +742,7 @@
         }
 
         .featured-article:hover .featured-image img {
-            transform: scale(1.1) rotateY(5deg) rotateX(5deg);
+            transform: scale(1.1);
         }
 
         .featured-article:hover .featured-image::before {
@@ -917,6 +944,7 @@
             transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
 
         .newsletter-button::before {
@@ -996,6 +1024,7 @@
         .footer-social {
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .social-link {
@@ -1088,15 +1117,33 @@
         }
 
         /* Responsive Design */
+        @media (max-width: 1400px) {
+            .content-section {
+                padding: 8rem 2rem;
+            }
+        }
+
         @media (max-width: 1200px) {
             .footer-brand {
                 grid-column: span 1;
+            }
+
+            .featured-article {
+                gap: 3rem;
+            }
+
+            .featured-content {
+                padding-left: 1rem;
             }
         }
 
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
             }
 
             .header {
@@ -1127,10 +1174,12 @@
 
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
             }
 
             .newsletter {
                 padding: 3rem 2rem;
+                margin-top: 6rem;
             }
 
             .newsletter-form {
@@ -1141,12 +1190,31 @@
             .hero-cta {
                 flex-direction: column;
                 gap: 1rem;
+                align-items: stretch;
+                max-width: 300px;
+                margin: 0 auto;
             }
 
             .cta-primary, .cta-secondary {
                 width: 100%;
-                max-width: 280px;
                 text-align: center;
+            }
+
+            .hero {
+                min-height: 100vh;
+                padding: 0 1rem;
+            }
+
+            .section-header {
+                margin-bottom: 4rem;
+            }
+
+            .footer-grid {
+                gap: 3rem;
+            }
+
+            .footer {
+                padding: 6rem 2rem 3rem;
             }
         }
 
@@ -1155,8 +1223,20 @@
                 grid-template-columns: 1fr;
             }
 
-            .orb {
-                display: none;
+            .newsletter {
+                padding: 2rem 1rem;
+            }
+
+            .news-card {
+                padding: 1.5rem;
+            }
+
+            .stat-card {
+                padding: 2rem 1rem;
+            }
+
+            .stat-number {
+                font-size: 3rem;
             }
         }
 
@@ -1190,6 +1270,77 @@
         a:focus {
             outline: 2px solid var(--accent);
             outline-offset: 2px;
+        }
+
+        /* Keyboard navigation styles */
+        .keyboard-navigation button:focus,
+        .keyboard-navigation input:focus,
+        .keyboard-navigation a:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* Improved accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .animated-bg {
+                animation: none;
+            }
+
+            .orb {
+                animation: none;
+            }
+
+            .scroll-indicator {
+                animation: none;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --glass-bg: rgba(255, 255, 255, 0.2);
+                --glass-border: rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        /* Loading state improvements */
+        .news-card.loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .news-card.loaded {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Error states */
+        .error-message {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--accent-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Success states */
+        .success-message {
+            color: var(--accent-tertiary);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .success-message.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -1227,10 +1378,13 @@
             <li><a href="#stats">Analytics</a></li>
             <li><a href="#about">About</a></li>
         </ul>
-        <button class="theme-toggle" id="themeToggle">
-            <span>🌙</span>
-            <span>Theme</span>
-        </button>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <button class="theme-toggle" id="themeToggle">
+                <span>🌙</span>
+                <span>Theme</span>
+            </button>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        </div>
     </nav>
 </header>
 
@@ -1360,6 +1514,7 @@
             <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
             <button type="submit" class="newsletter-button">Subscribe</button>
         </form>
+        <div class="success-message" id="newsletterSuccess">Thank you for subscribing!</div>
     </div>
 </div>
 
@@ -1449,6 +1604,7 @@
 <script>
     class ModernAppleBlog {
         constructor() {
+            this.currentTheme = 'dark'; // Store theme in memory instead of localStorage
             this.initPreloader();
             this.initCursor();
             this.initTheme();
@@ -1457,94 +1613,107 @@
             this.initStats();
             this.initNewsletter();
             this.init3DPreloader();
+            this.initMobileMenu();
+            this.initErrorHandling();
         }
 
         init3DPreloader() {
             const container = document.getElementById('preloader-3d');
             if (!container) return;
 
-            // Scene setup
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({
-                alpha: true,
-                antialias: true,
-                powerPreference: "high-performance"
-            });
-            renderer.setSize(150, 150);
-            renderer.setClearColor(0x000000, 0);
-            container.appendChild(renderer.domElement);
+            try {
+                // Scene setup
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({
+                    alpha: true,
+                    antialias: true,
+                    powerPreference: "high-performance"
+                });
+                renderer.setSize(150, 150);
+                renderer.setClearColor(0x000000, 0);
+                container.appendChild(renderer.domElement);
 
-            // Create modern geometric logo
-            const geometry = new THREE.IcosahedronGeometry(1, 1);
-            const material = new THREE.MeshPhongMaterial({
-                color: 0x0066ff,
-                specular: 0x111111,
-                shininess: 100,
-                transparent: true,
-                opacity: 0.9,
-                wireframe: false
-            });
+                // Create modern geometric logo
+                const geometry = new THREE.IcosahedronGeometry(1, 1);
+                const material = new THREE.MeshPhongMaterial({
+                    color: 0x0066ff,
+                    specular: 0x111111,
+                    shininess: 100,
+                    transparent: true,
+                    opacity: 0.9,
+                    wireframe: false
+                });
 
-            const logoMesh = new THREE.Mesh(geometry, material);
-            scene.add(logoMesh);
+                const logoMesh = new THREE.Mesh(geometry, material);
+                scene.add(logoMesh);
 
-            // Add wireframe version
-            const wireframeMaterial = new THREE.MeshBasicMaterial({
-                color: 0x0066ff,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.3
-            });
-            const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
-            wireframeMesh.scale.set(1.1, 1.1, 1.1);
-            scene.add(wireframeMesh);
+                // Add wireframe version
+                const wireframeMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x0066ff,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+                wireframeMesh.scale.set(1.1, 1.1, 1.1);
+                scene.add(wireframeMesh);
 
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-            scene.add(ambientLight);
+                // Lighting
+                const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+                scene.add(ambientLight);
 
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(1, 1, 1);
-            scene.add(directionalLight);
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+                directionalLight.position.set(1, 1, 1);
+                scene.add(directionalLight);
 
-            const directionalLight2 = new THREE.DirectionalLight(0x0066ff, 0.5);
-            directionalLight2.position.set(-1, -1, -1);
-            scene.add(directionalLight2);
+                const directionalLight2 = new THREE.DirectionalLight(0x0066ff, 0.5);
+                directionalLight2.position.set(-1, -1, -1);
+                scene.add(directionalLight2);
 
-            camera.position.z = 3;
+                camera.position.z = 3;
 
-            // Animation loop
-            const animate = () => {
-                requestAnimationFrame(animate);
+                // Animation loop
+                let animationId;
+                const animate = () => {
+                    animationId = requestAnimationFrame(animate);
 
-                logoMesh.rotation.x += 0.01;
-                logoMesh.rotation.y += 0.015;
-                wireframeMesh.rotation.x -= 0.005;
-                wireframeMesh.rotation.y -= 0.01;
+                    logoMesh.rotation.x += 0.01;
+                    logoMesh.rotation.y += 0.015;
+                    wireframeMesh.rotation.x -= 0.005;
+                    wireframeMesh.rotation.y -= 0.01;
 
-                renderer.render(scene, camera);
-            };
+                    renderer.render(scene, camera);
+                };
 
-            animate();
+                animate();
 
-            // Cleanup on preloader hide
-            setTimeout(() => {
-                if (container.parentNode) {
-                    container.parentNode.removeChild(container);
-                }
-            }, 4000);
+                // Cleanup on preloader hide
+                setTimeout(() => {
+                    if (animationId) {
+                        cancelAnimationFrame(animationId);
+                    }
+                    if (container && container.parentNode) {
+                        container.innerHTML = '';
+                    }
+                }, 4000);
+
+            } catch (error) {
+                console.warn('3D preloader could not be initialized:', error);
+                // Fallback to simple loader
+                container.innerHTML = '<div style="width: 150px; height: 150px; border: 2px solid #0066ff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>';
+            }
         }
 
         initPreloader() {
             const loadingBar = document.getElementById('loadingBar');
             const preloaderText = document.querySelector('.preloader-text');
 
-            // Simulate loading progress
+            // Simulate loading progress with more realistic progression
             let progress = 0;
             const interval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress > 100) progress = 100;
+                const increment = Math.random() * 12 + 3; // More consistent progress
+                progress = Math.min(progress + increment, 100);
 
                 if (loadingBar) {
                     loadingBar.style.width = progress + '%';
@@ -1554,73 +1723,112 @@
                     clearInterval(interval);
                     setTimeout(() => {
                         this.hidePreloader();
-                    }, 800);
+                    }, 600);
                 }
-            }, 100);
+            }, 120);
 
             // Animate preloader text
-            gsap.to(preloaderText, {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                delay: 0.5,
-                ease: 'power2.out'
-            });
+            if (typeof gsap !== 'undefined') {
+                gsap.to(preloaderText, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    delay: 0.5,
+                    ease: 'power2.out'
+                });
+            } else {
+                // Fallback animation
+                setTimeout(() => {
+                    preloaderText.style.opacity = '1';
+                    preloaderText.style.transform = 'translateY(0)';
+                }, 500);
+            }
         }
 
         hidePreloader() {
             const preloader = document.getElementById('preloader');
-            gsap.to(preloader, {
-                opacity: 0,
-                duration: 1,
-                ease: 'power2.inOut',
-                onComplete: () => {
+            if (typeof gsap !== 'undefined') {
+                gsap.to(preloader, {
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power2.inOut',
+                    onComplete: () => {
+                        preloader.style.display = 'none';
+                        this.startMainAnimations();
+                    }
+                });
+            } else {
+                // Fallback
+                preloader.style.transition = 'opacity 1s ease';
+                preloader.style.opacity = '0';
+                setTimeout(() => {
                     preloader.style.display = 'none';
                     this.startMainAnimations();
-                }
-            });
+                }, 1000);
+            }
         }
 
         startMainAnimations() {
             // Header reveal
             setTimeout(() => {
-                document.getElementById('header').classList.add('visible');
+                const header = document.getElementById('header');
+                if (header) {
+                    header.classList.add('visible');
+                }
             }, 200);
 
-            // Hero animations with stagger
-            const tl = gsap.timeline();
-            tl.to('.hero-content h1', {
-                opacity: 1,
-                y: 0,
-                duration: 1.5,
-                ease: 'power3.out'
-            })
-                .to('.hero-subtitle', {
+            // Hero animations with fallback
+            if (typeof gsap !== 'undefined') {
+                const tl = gsap.timeline();
+                tl.to('.hero-content h1', {
                     opacity: 1,
                     y: 0,
-                    duration: 1.2,
+                    duration: 1.5,
                     ease: 'power3.out'
-                }, '-=1.2')
-                .to('.hero-description', {
-                    opacity: 1,
-                    y: 0,
-                    duration: 1,
-                    ease: 'power3.out'
-                }, '-=0.8')
-                .to('.hero-cta', {
-                    opacity: 1,
-                    y: 0,
-                    duration: 1,
-                    ease: 'power3.out'
-                }, '-=0.6')
-                .to('.scroll-indicator', {
-                    opacity: 1,
-                    duration: 0.8,
-                    ease: 'power2.out'
-                }, '-=0.4');
+                })
+                    .to('.hero-subtitle', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1.2,
+                        ease: 'power3.out'
+                    }, '-=1.2')
+                    .to('.hero-description', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: 'power3.out'
+                    }, '-=0.8')
+                    .to('.hero-cta', {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: 'power3.out'
+                    }, '-=0.6')
+                    .to('.scroll-indicator', {
+                        opacity: 1,
+                        duration: 0.8,
+                        ease: 'power2.out'
+                    }, '-=0.4');
+            } else {
+                // Fallback animations
+                const elements = ['.hero-content h1', '.hero-subtitle', '.hero-description', '.hero-cta', '.scroll-indicator'];
+                elements.forEach((selector, index) => {
+                    setTimeout(() => {
+                        const el = document.querySelector(selector);
+                        if (el) {
+                            el.style.transition = 'all 1s ease';
+                            el.style.opacity = '1';
+                            el.style.transform = 'translateY(0)';
+                        }
+                    }, index * 200);
+                });
+            }
         }
 
         initCursor() {
+            // Only initialize cursor on desktop
+            if (window.innerWidth <= 768) return;
+
             const cursor = document.getElementById('cursor');
             const cursorTrail = document.getElementById('cursorTrail');
 
@@ -1668,17 +1876,13 @@
             const body = document.body;
 
             // Set initial theme
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            body.setAttribute('data-theme', savedTheme);
-            this.updateThemeToggle(savedTheme);
+            body.setAttribute('data-theme', this.currentTheme);
+            this.updateThemeToggle(this.currentTheme);
 
             themeToggle.addEventListener('click', () => {
-                const currentTheme = body.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-                body.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                this.updateThemeToggle(newTheme);
+                this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+                body.setAttribute('data-theme', this.currentTheme);
+                this.updateThemeToggle(this.currentTheme);
             });
         }
 
@@ -1693,7 +1897,35 @@
             }
         }
 
+        initMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.querySelector('.nav-links');
+
+            if (mobileMenuBtn && navLinks) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+                    navLinks.style.position = 'absolute';
+                    navLinks.style.top = '100%';
+                    navLinks.style.left = '0';
+                    navLinks.style.right = '0';
+                    navLinks.style.background = 'var(--card)';
+                    navLinks.style.flexDirection = 'column';
+                    navLinks.style.padding = '2rem';
+                    navLinks.style.borderRadius = '0 0 24px 24px';
+                    navLinks.style.backdropFilter = 'var(--blur-lg)';
+                    navLinks.style.border = '1px solid var(--glass-border)';
+                    navLinks.style.borderTop = 'none';
+                });
+            }
+        }
+
         initAnimations() {
+            if (typeof gsap === 'undefined') {
+                // Fallback for when GSAP is not available
+                this.initFallbackAnimations();
+                return;
+            }
+
             // Section scroll animations
             gsap.utils.toArray('.content-section').forEach((section, i) => {
                 ScrollTrigger.create({
@@ -1728,6 +1960,32 @@
             });
         }
 
+        initFallbackAnimations() {
+            // Intersection Observer fallback
+            if ('IntersectionObserver' in window) {
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.1
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.transition = 'all 0.8s ease';
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe all sections and cards
+                document.querySelectorAll('.content-section, .news-card, .stat-card').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+        }
+
         initStats() {
             const stats = [
                 { id: 'stat1', target: 2.1, suffix: 'B+' },
@@ -1741,28 +1999,65 @@
                     const element = document.getElementById(stat.id);
                     if (!element) return;
 
-                    gsap.to({ value: 0 }, {
-                        value: stat.target,
-                        duration: 2.5,
-                        ease: 'power2.out',
-                        onUpdate: function() {
-                            const current = Math.floor(this.targets()[0].value);
-                            element.textContent = current + stat.suffix;
-                        }
-                    });
+                    if (typeof gsap !== 'undefined') {
+                        gsap.to({ value: 0 }, {
+                            value: stat.target,
+                            duration: 2.5,
+                            ease: 'power2.out',
+                            onUpdate: function() {
+                                const current = Math.floor(this.targets()[0].value);
+                                element.textContent = current + stat.suffix;
+                            }
+                        });
+                    } else {
+                        // Fallback counter animation
+                        let current = 0;
+                        const increment = stat.target / 100;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= stat.target) {
+                                current = stat.target;
+                                clearInterval(timer);
+                            }
+                            element.textContent = Math.floor(current) + stat.suffix;
+                        }, 25);
+                    }
                 });
             };
 
-            ScrollTrigger.create({
-                trigger: '#stats',
-                start: 'top 70%',
-                onEnter: animateStats,
-                once: true
-            });
+            // Use Intersection Observer to trigger stats animation
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animateStats();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                const statsSection = document.getElementById('stats');
+                if (statsSection) {
+                    observer.observe(statsSection);
+                }
+            } else {
+                // Fallback - trigger on scroll
+                window.addEventListener('scroll', () => {
+                    const statsSection = document.getElementById('stats');
+                    if (statsSection) {
+                        const rect = statsSection.getBoundingClientRect();
+                        if (rect.top < window.innerHeight && rect.bottom > 0) {
+                            animateStats();
+                            window.removeEventListener('scroll', arguments.callee);
+                        }
+                    }
+                });
+            }
         }
 
         initNewsletter() {
             const form = document.getElementById('newsletterForm');
+            const successMessage = document.getElementById('newsletterSuccess');
             if (!form) return;
 
             form.addEventListener('submit', (e) => {
@@ -1770,25 +2065,126 @@
                 const input = form.querySelector('.newsletter-input');
                 const button = form.querySelector('.newsletter-button');
 
-                // Show success animation
-                button.textContent = 'Subscribed!';
-                button.style.background = 'var(--accent-tertiary)';
+                // Validate email
+                const email = input.value.trim();
+                if (!this.isValidEmail(email)) {
+                    this.showNotification('Please enter a valid email address', 'error');
+                    return;
+                }
 
+                // Show loading state
+                const originalText = button.textContent;
+                button.textContent = 'Subscribing...';
+                button.disabled = true;
+
+                // Simulate API call
                 setTimeout(() => {
-                    button.textContent = 'Subscribe';
-                    button.style.background = 'var(--accent)';
-                    input.value = '';
-                }, 2000);
+                    button.textContent = 'Subscribed!';
+                    button.style.background = 'var(--accent-tertiary)';
+
+                    // Show success message
+                    if (successMessage) {
+                        successMessage.classList.add('show');
+                    }
+
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.background = 'var(--accent)';
+                        button.disabled = false;
+                        input.value = '';
+
+                        if (successMessage) {
+                            successMessage.classList.remove('show');
+                        }
+                    }, 3000);
+                }, 1000);
+            });
+        }
+
+        isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: var(--card);
+                border: 1px solid var(--glass-border);
+                border-radius: 12px;
+                padding: 1rem 1.5rem;
+                color: var(--primary);
+                font-size: 0.875rem;
+                z-index: 10000;
+                backdrop-filter: var(--blur-md);
+                box-shadow: var(--shadow);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+
+            if (type === 'error') {
+                notification.style.borderColor = 'var(--accent-secondary)';
+                notification.style.color = 'var(--accent-secondary)';
+            }
+
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            // Remove after delay
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        initErrorHandling() {
+            // Global error handler
+            window.addEventListener('error', (e) => {
+                console.error('Global error:', e.error);
+                // Don't show error notifications to users, just log them
+            });
+
+            // Unhandled promise rejection handler
+            window.addEventListener('unhandledrejection', (e) => {
+                console.error('Unhandled promise rejection:', e.reason);
+                e.preventDefault();
             });
         }
 
         async loadNews() {
             try {
-                // Since we can't use real API, load demo content
+                // Always load demo content since we can't use real APIs
                 this.loadDemoNews();
             } catch (error) {
                 console.error('Error loading news:', error);
-                this.loadDemoNews();
+                this.showErrorState();
+            }
+        }
+
+        showErrorState() {
+            const newsContainer = document.getElementById('news-container');
+            if (newsContainer) {
+                newsContainer.innerHTML = `
+                    <div class="error-message">
+                        <p>Unable to load news at this time.</p>
+                        <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            Retry
+                        </button>
+                    </div>
+                `;
             }
         }
 
@@ -1860,7 +2256,8 @@
             const featured = articles[0];
             const featuredDate = this.formatDate(featured.publishedAt);
 
-            featuredContainer.innerHTML = `
+            if (featuredContainer) {
+                featuredContainer.innerHTML = `
                     <article class="featured-article">
                         <div class="featured-image">
                             <img src="${featured.urlToImage}"
@@ -1882,85 +2279,125 @@
                         </div>
                     </article>
                 `;
+            }
 
             // Regular articles
             const regularArticles = articles.slice(1);
             const newsHTML = regularArticles.map((article, index) => {
                 const publishedDate = this.formatDate(article.publishedAt);
                 return `
-                        <div class="news-card" style="opacity: 0; transform: translateY(30px);">
-                            <div class="news-meta">
-                                <span>${article.source?.name || 'Apple News'}</span>
-                                <span>•</span>
-                                <span>${publishedDate}</span>
-                            </div>
-                            <h3>${article.title}</h3>
-                            <p>${article.description}</p>
-                            <a href="${article.url}" class="read-more">Read Article</a>
+                    <div class="news-card" style="opacity: 0; transform: translateY(30px);">
+                        <div class="news-meta">
+                            <span>${article.source?.name || 'Apple News'}</span>
+                            <span>•</span>
+                            <span>${publishedDate}</span>
                         </div>
-                    `;
+                        <h3>${article.title}</h3>
+                        <p>${article.description}</p>
+                        <a href="${article.url}" class="read-more">Read Article</a>
+                    </div>
+                `;
             }).join('');
 
-            newsContainer.innerHTML = `<div class="news-grid">${newsHTML}</div>`;
+            if (newsContainer) {
+                newsContainer.innerHTML = `<div class="news-grid">${newsHTML}</div>`;
+            }
 
             // Animate featured article
-            gsap.to('.featured-article', {
-                opacity: 1,
-                y: 0,
-                duration: 1.2,
-                delay: 0.3,
-                ease: 'power3.out'
-            });
-
-            // Animate news cards with stagger
-            gsap.utils.toArray('.news-grid .news-card').forEach((card, i) => {
-                ScrollTrigger.create({
-                    trigger: card,
-                    start: 'top 85%',
-                    onEnter: () => {
-                        gsap.to(card, {
-                            opacity: 1,
-                            y: 0,
-                            duration: 0.8,
-                            delay: i * 0.1,
-                            ease: 'power3.out'
-                        });
-                    }
+            if (typeof gsap !== 'undefined') {
+                gsap.to('.featured-article', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1.2,
+                    delay: 0.3,
+                    ease: 'power3.out'
                 });
-            });
+
+                // Animate news cards with stagger
+                gsap.utils.toArray('.news-grid .news-card').forEach((card, i) => {
+                    ScrollTrigger.create({
+                        trigger: card,
+                        start: 'top 85%',
+                        onEnter: () => {
+                            gsap.to(card, {
+                                opacity: 1,
+                                y: 0,
+                                duration: 0.8,
+                                delay: i * 0.1,
+                                ease: 'power3.out'
+                            });
+                        }
+                    });
+                });
+            } else {
+                // Fallback animations
+                setTimeout(() => {
+                    const featuredArticle = document.querySelector('.featured-article');
+                    if (featuredArticle) {
+                        featuredArticle.style.transition = 'all 1.2s ease';
+                        featuredArticle.style.opacity = '1';
+                        featuredArticle.style.transform = 'translateY(0)';
+                    }
+
+                    document.querySelectorAll('.news-grid .news-card').forEach((card, i) => {
+                        setTimeout(() => {
+                            card.style.transition = 'all 0.8s ease';
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, i * 100);
+                    });
+                }, 300);
+            }
         }
 
         formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffTime = Math.abs(now - date);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            try {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            if (diffDays === 1) return 'Yesterday';
-            if (diffDays < 7) return `${diffDays} days ago`;
+                if (diffDays === 1) return 'Yesterday';
+                if (diffDays < 7) return `${diffDays} days ago`;
 
-            return date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            } catch (error) {
+                return 'Recently';
+            }
         }
     }
 
-    // Initialize when DOM is loaded
-    document.addEventListener('DOMContentLoaded', () => {
-        // Add initial styles to prevent flash
-        document.body.style.opacity = '0';
-
-        // Fade in body after initialization
-        setTimeout(() => {
+    // Initialize when DOM is loaded with better error handling
+    function initializeApp() {
+        try {
+            // Add initial styles to prevent flash
+            document.body.style.opacity = '0';
             document.body.style.transition = 'opacity 0.5s ease';
-            document.body.style.opacity = '1';
-        }, 100);
 
-        // Initialize the application
-        new ModernAppleBlog();
-    });
+            // Fade in body after short delay
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+
+            // Initialize the application
+            new ModernAppleBlog();
+        } catch (error) {
+            console.error('Failed to initialize app:', error);
+            // Show basic fallback
+            document.body.style.opacity = '1';
+            document.getElementById('preloader').style.display = 'none';
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+        initializeApp();
+    }
 
     // Add smooth scrolling for navigation links
     document.addEventListener('click', (e) => {
@@ -1970,63 +2407,88 @@
             const targetElement = document.querySelector(targetId);
 
             if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+                const headerOffset = 100;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
                 });
             }
         }
     });
 
-    // Add parallax effect to floating orbs
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const orbs = document.querySelectorAll('.orb');
+    // Add parallax effect to floating orbs (desktop only)
+    if (window.innerWidth > 768) {
+        let ticking = false;
 
-        orbs.forEach((orb, index) => {
-            const speed = 0.5 + (index * 0.2);
-            orb.style.transform = `translateY(${scrolled * speed}px)`;
-        });
-    });
+        function updateParallax() {
+            const scrolled = window.pageYOffset;
+            const orbs = document.querySelectorAll('.orb');
 
-    // Add intersection observer for performance
-    if ('IntersectionObserver' in window) {
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('in-view');
-                }
+            orbs.forEach((orb, index) => {
+                const speed = 0.3 + (index * 0.1);
+                const yPos = -(scrolled * speed);
+                orb.style.transform = `translateY(${yPos}px)`;
             });
-        }, observerOptions);
 
-        // Observe all sections
-        document.querySelectorAll('.content-section').forEach(section => {
-            observer.observe(section);
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(updateParallax);
+                ticking = true;
+            }
         });
     }
 
     // Add window resize handler for responsive adjustments
+    let resizeTimeout;
     window.addEventListener('resize', () => {
-        // Update cursor position on resize
-        const cursor = document.getElementById('cursor');
-        const cursorTrail = document.getElementById('cursorTrail');
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            // Update cursor visibility
+            const cursor = document.getElementById('cursor');
+            const cursorTrail = document.getElementById('cursorTrail');
 
-        if (cursor && cursorTrail) {
-            cursor.style.display = window.innerWidth > 768 ? 'block' : 'none';
-            cursorTrail.style.display = window.innerWidth > 768 ? 'block' : 'none';
-        }
+            if (cursor && cursorTrail) {
+                const showCursor = window.innerWidth > 768;
+                cursor.style.display = showCursor ? 'block' : 'none';
+                cursorTrail.style.display = showCursor ? 'block' : 'none';
+            }
+
+            // Close mobile menu on resize
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks && window.innerWidth > 768) {
+                navLinks.style.display = '';
+                navLinks.style.position = '';
+                navLinks.style.top = '';
+                navLinks.style.left = '';
+                navLinks.style.right = '';
+                navLinks.style.background = '';
+                navLinks.style.flexDirection = '';
+                navLinks.style.padding = '';
+                navLinks.style.borderRadius = '';
+                navLinks.style.backdropFilter = '';
+                navLinks.style.border = '';
+            }
+        }, 250);
     });
 
-    // Add keyboard navigation
+    // Add keyboard navigation support
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             document.body.classList.add('keyboard-navigation');
+        }
+
+        // ESC key to close mobile menu
+        if (e.key === 'Escape') {
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks && window.innerWidth <= 768) {
+                navLinks.style.display = 'none';
+            }
         }
     });
 
@@ -2034,15 +2496,35 @@
         document.body.classList.remove('keyboard-navigation');
     });
 
-    // Add performance monitoring
+    // Performance monitoring
     if ('performance' in window) {
         window.addEventListener('load', () => {
             setTimeout(() => {
-                const perf = performance.getEntriesByType('navigation')[0];
-                console.log(`Page loaded in ${Math.round(perf.loadEventEnd - perf.fetchStart)}ms`);
+                try {
+                    const perf = performance.getEntriesByType('navigation')[0];
+                    const loadTime = Math.round(perf.loadEventEnd - perf.fetchStart);
+                    console.log(`Page loaded in ${loadTime}ms`);
+                } catch (error) {
+                    console.log('Performance monitoring not available');
+                }
             }, 0);
         });
     }
+
+    // Add loading states for images
+    document.addEventListener('DOMContentLoaded', () => {
+        const images = document.querySelectorAll('img');
+        images.forEach(img => {
+            img.addEventListener('load', () => {
+                img.style.opacity = '1';
+            });
+
+            img.addEventListener('error', () => {
+                img.style.opacity = '0.5';
+                console.warn('Failed to load image:', img.src);
+            });
+        });
+    });
 </script>
 </body>
 </html>
